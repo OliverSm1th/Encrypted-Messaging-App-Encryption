@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encrypted Messaging Program", "Encrypted Messaging Program\Encrypted Messaging Program.csproj", "{906BE504-7CCA-45D6-BB5D-F97579B8239C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{906BE504-7CCA-45D6-BB5D-F97579B8239C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{906BE504-7CCA-45D6-BB5D-F97579B8239C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{906BE504-7CCA-45D6-BB5D-F97579B8239C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{906BE504-7CCA-45D6-BB5D-F97579B8239C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A1BB6251-DF10-4A9E-9F03-60D2845138E4}
+	EndGlobalSection
+EndGlobal

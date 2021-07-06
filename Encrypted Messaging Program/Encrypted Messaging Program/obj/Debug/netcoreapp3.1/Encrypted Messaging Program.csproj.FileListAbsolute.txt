@@ -1,0 +1,17 @@
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.exe
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.deps.json
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.runtimeconfig.json
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.runtimeconfig.dev.json
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.dll
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.pdb
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Firebase.dll
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\LiteDB.dll
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\System.Reactive.dll
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.AssemblyInfoInputs.cache
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.AssemblyInfo.cs
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.csproj.CoreCompileInputs.cache
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.csproj.CopyComplete
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.dll
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.pdb
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.genruntimeconfig.cache
