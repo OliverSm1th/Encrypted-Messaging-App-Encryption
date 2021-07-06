@@ -1,2 +1,2 @@
 # Encrypted Messaging App
- NEA Project
+NEA Project creating an encrypted messaging app using End-To-End Encryption
