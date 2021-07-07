@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Firebase.Database;
 using Firebase.Database.Query;
+using Newtonsoft.Json.Linq;
 
 
 
@@ -19,11 +20,9 @@ namespace Encrpytion_Prototype
 
     public class Program
     {
-
+        public FirebaseClient firebase = new FirebaseClient("https://messaging-app-demo-348e5-default-rtdb.europe-west1.firebasedatabase.app/");
         public static void Main(string[] args)
         {
-            new Program().Run().Wait();
-
 
             Dictionary<string, BigInteger[]> Server = new Dictionary<string, BigInteger[]>();
 
@@ -32,6 +31,7 @@ namespace Encrpytion_Prototype
 
             Console.Write("Enter your user ID:  ");
             string userID = Console.ReadLine();
+            new Program().GetRequests(userID).Wait();
 
             Console.WriteLine("User 1  (a)");
             DiffieHellman user1 = new DiffieHellman(256, 'a', true);
@@ -49,15 +49,25 @@ namespace Encrpytion_Prototype
 
         }
 
-        private async Task Run()
+        private async Task GetRequests(string userID)
         {
             string authKey = "c44fadd7-600b-430c-b9f1-0c6e1d72e897";
-            FirebaseClient firebase = new FirebaseClient("https://messaging-app-demo-348e5-default-rtdb.europe-west1.firebasedatabase.app/");
-            var items = await firebase.Child("data").OnceAsync<String>();
-            foreach (var item in items)
+            var items = await firebase.Child("users").Child(userID).Child("requests").OnceAsync<String>();
+            Console.WriteLine("Recieved items");
+            Console.WriteLine(items.ToString());
+            //JObject parsed = JObject.Parse(items);
+
+            foreach (var pair in items)
             {
-                Console.WriteLine($"{item.Key} : {item.Object}");
+                Console.WriteLine($"{pair.Key} : {pair.Object}");
             }
+
+            //return int[];
+        }
+
+        private async Task SendRequest(string userID, BigInteger[] data)
+        {
+            await firebase.Child("users").Child(userID).Child("requests").Child(userID).PostAsync(data);
         }
 
     }

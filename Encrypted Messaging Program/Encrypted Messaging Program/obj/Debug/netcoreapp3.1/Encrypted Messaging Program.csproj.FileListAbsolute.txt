@@ -15,3 +15,21 @@ D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Mes
 D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.dll
 D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.pdb
 D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.genruntimeconfig.cache
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.dll
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.pdb
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.exe
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.deps.json
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.runtimeconfig.json
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.runtimeconfig.dev.json
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.dll
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Encrypted Messaging Program.pdb
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Firebase.dll
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\LiteDB.dll
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\bin\Debug\netcoreapp3.1\System.Reactive.dll
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.csproj.AssemblyReference.cache
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.AssemblyInfoInputs.cache
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.AssemblyInfo.cs
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.csproj.CoreCompileInputs.cache
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.csproj.CopyComplete
+C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.genruntimeconfig.cache
