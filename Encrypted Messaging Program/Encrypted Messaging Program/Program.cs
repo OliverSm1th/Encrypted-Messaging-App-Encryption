@@ -23,15 +23,65 @@ namespace Encrpytion_Prototype
         public FirebaseClient firebase = new FirebaseClient("https://messaging-app-demo-348e5-default-rtdb.europe-west1.firebasedatabase.app/");
         public static void Main(string[] args)
         {
-
-            Dictionary<string, BigInteger[]> Server = new Dictionary<string, BigInteger[]>();
-
-
             Console.WriteLine("\nInitilising DiffieHellman");
 
+            Program test = new Program();
+            test.testRequest().Wait();
+            Console.WriteLine("Test finished.....");
+
+            //new Program().SendRequest(userID, data).Wait();
+
+        }
+
+        private async Task testRequest()
+        {
             Console.Write("Enter your user ID:  ");
             string userID = Console.ReadLine();
-            new Program().GetRequests(userID).Wait();
+            //new Program().GetRequests(userID).Wait();
+
+            bool stop = false;
+            while (!stop)
+            {
+                Console.WriteLine("--Menu--\n1) Send Request\n2) Accept Request\n3) Change user\n");
+                string choice = Console.ReadLine();
+                bool success = Int32.TryParse(choice, out int int_choice);
+                if (success && int_choice <= 3 && int_choice > 0)
+                {
+                    switch (int_choice)
+                    {
+                        case 1:
+                            Console.Write("Enter user:  ");
+                            string requestUser = Console.ReadLine();
+                            DiffieHellman user1 = new DiffieHellman(256);
+
+                            await SendRequest(userID, requestUser, user1.Initilise());
+                            break;
+                        case 2:
+                            Console.WriteLine("Pending Requests:");
+                            Program test = new Program();
+                            string[] requestID = await test.GetRequests(userID);
+                            foreach (string request in requestID)
+                            {
+                                Console.WriteLine(request);
+                            }
+                            Console.WriteLine();
+                            Console.WriteLine("Enter user to accept: ");
+                            string acceptUser = Console.ReadLine();
+                            if(acceptUser.Length > 0)
+                            {
+                                
+                                Console.WriteLine("Done");
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void testDH()
+        {
+            //Dictionary<string, BigInteger[]> Server = new Dictionary<string, BigInteger[]>();
+
 
             Console.WriteLine("User 1  (a)");
             DiffieHellman user1 = new DiffieHellman(256, 'a', true);
@@ -41,33 +91,40 @@ namespace Encrpytion_Prototype
             Console.WriteLine();
 
             BigInteger[] data = user1.Initilise(); // Send Friend Request
-            Server.Add(userID, data);
+            //Server.Add(userID, data);
             user2.Respond(data);
             BigInteger secret2 = user2.getSharedKey(data, 1);
             BigInteger secret1 = user1.getSharedKey(data, 0);
             Console.WriteLine(secret1 == secret2);
-
         }
 
-        private async Task GetRequests(string userID)
+        public async Task<string[]> GetRequests(string userID)
         {
-            string authKey = "c44fadd7-600b-430c-b9f1-0c6e1d72e897";
-            var items = await firebase.Child("users").Child(userID).Child("requests").OnceAsync<String>();
-            Console.WriteLine("Recieved items");
-            Console.WriteLine(items.ToString());
-            //JObject parsed = JObject.Parse(items);
+            var items =  firebase.Child("users").Child(userID).Child("requests").OnceAsync<KeyData>();
 
-            foreach (var pair in items)
+            var requestID = new List<string>();
+
+            foreach (var pair in await items)
             {
-                Console.WriteLine($"{pair.Key} : {pair.Object}");
+                //Console.WriteLine($"{pair.Key} : {pair.Object}");
+                requestID.Add(pair.Key);
             }
-
-            //return int[];
+            return requestID.ToArray();
         }
 
-        private async Task SendRequest(string userID, BigInteger[] data)
+        public async Task<BigInteger[]> GetRequest(string userID, string requestID)
         {
-            await firebase.Child("users").Child(userID).Child("requests").Child(userID).PostAsync(data);
+            var items = firebase.Child("users").Child(userID).Child("requests").Child("").OnceAsync<KeyData>();
+
+            return items[requestID];
+            //https://bolorundurowb.com/posts/31/using-the-firebase-realtime-database-with-.net
+        }
+
+
+        private async Task SendRequest(string userID, String requestID, BigInteger[] data)
+        {
+            await firebase.Child("users").Child(requestID).Child("requests").Child(userID).PostAsync(data);
+            Console.WriteLine("Done");
         }
 
     }

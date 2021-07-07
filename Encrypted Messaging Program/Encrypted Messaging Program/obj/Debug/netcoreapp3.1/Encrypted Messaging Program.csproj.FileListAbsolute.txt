@@ -33,3 +33,4 @@ C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Prog
 C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.csproj.CoreCompileInputs.cache
 C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.csproj.CopyComplete
 C:\Users\olive\Documents\GitHub\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.genruntimeconfig.cache
+D:\Documents\Computing\NEA A-Level Project\Encrypted-Messaging-App\Encrypted Messaging Program\Encrypted Messaging Program\obj\Debug\netcoreapp3.1\Encrypted Messaging Program.csproj.AssemblyReference.cache
