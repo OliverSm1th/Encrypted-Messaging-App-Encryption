@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Firebase.Database;
+using Firebase.Database.Query;
+using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Security.Cryptography;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Firebase.Database;
-using Firebase.Database.Query;
-using Newtonsoft.Json.Linq;
 
 
 
@@ -38,6 +37,8 @@ namespace Encrpytion_Prototype
             Console.Write("Enter your user ID:  ");
             string userID = Console.ReadLine();
             //new Program().GetRequests(userID).Wait();
+            Request Requests = new Request(firebase);
+
 
             bool stop = false;
             while (!stop)
@@ -58,18 +59,20 @@ namespace Encrpytion_Prototype
                             break;
                         case 2:
                             Console.WriteLine("Pending Requests:");
-                            Program test = new Program();
-                            string[] requestID = await test.GetRequests(userID);
-                            foreach (string request in requestID)
-                            {
-                                Console.WriteLine(request);
-                            }
+                            //Program test = new Program();
+                            //string[] requestID = await test.GetRequests(userID);
+                            //foreach (string request in requestID)
+                            //{
+                            //    Console.WriteLine(request);
+                            //}
+                            Requests.GetAll(userID);
+
                             Console.WriteLine();
                             Console.WriteLine("Enter user to accept: ");
                             string acceptUser = Console.ReadLine();
-                            if(acceptUser.Length > 0)
+                            if (acceptUser.Length > 0)
                             {
-                                
+
                                 Console.WriteLine("Done");
                             }
                             break;
@@ -100,7 +103,7 @@ namespace Encrpytion_Prototype
 
         public async Task<string[]> GetRequests(string userID)
         {
-            var items =  firebase.Child("users").Child(userID).Child("requests").OnceAsync<KeyData>();
+            var items = firebase.Child("users").Child(userID).Child("requests").OnceAsync<KeyData>();
 
             var requestID = new List<string>();
 
@@ -112,13 +115,13 @@ namespace Encrpytion_Prototype
             return requestID.ToArray();
         }
 
-        public async Task<BigInteger[]> GetRequest(string userID, string requestID)
+        /*public async Task<BigInteger[]> GetRequest(string userID, string requestID)
         {
             var items = firebase.Child("users").Child(userID).Child("requests").Child("").OnceAsync<KeyData>();
 
             return items[requestID];
             //https://bolorundurowb.com/posts/31/using-the-firebase-realtime-database-with-.net
-        }
+        }*/
 
 
         private async Task SendRequest(string userID, String requestID, BigInteger[] data)
@@ -128,6 +131,31 @@ namespace Encrpytion_Prototype
         }
 
     }
+
+    class Request
+    {
+        List<KeyValuePair<string, KeyData>> requests = new List<KeyValuePair<string, KeyData>>();
+        public FirebaseClient firebase;
+        public Request(FirebaseClient p_firebase)
+        {
+            firebase = p_firebase;
+
+        }
+
+
+
+        public async Task GetAll(string userID) //<List<KeyValuePair<string, KeyData>>>
+        {
+            var items = await firebase.Child("users").Child(userID).Child("requests").OnceAsync<KeyData>();
+            Object[] types = items.GetType().GetMethods();
+            Console.WriteLine(String.Join("\n", types));
+            
+            
+        }
+
+    }
+
+
 
     class DiffieHellman
     {
