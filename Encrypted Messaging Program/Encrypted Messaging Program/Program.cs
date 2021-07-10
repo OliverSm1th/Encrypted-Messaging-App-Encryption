@@ -5,14 +5,31 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Reactive.Linq;
 
 
-
+//{ p, g, A, B}
 namespace Encrpytion_Prototype
 {
     public class KeyData
     {
         public String Data { get; set; }
+        public BigInteger prime { get; set; }
+        public int g { get; set; }
+        public BigInteger A { get; set; }
+        public BigInteger B { get; set; }
+        public KeyData(BigInteger prime_, int g_, BigInteger secret, int userNum)
+        {
+            prime = prime_;
+            g = g_;
+            if(userNum == 0){
+                A = secret;
+            }
+            else{
+                B = secret;
+            }
+        }
     }
 
 
@@ -37,7 +54,7 @@ namespace Encrpytion_Prototype
             Console.Write("Enter your user ID:  ");
             string userID = Console.ReadLine();
             //new Program().GetRequests(userID).Wait();
-            Request Requests = new Request(firebase);
+            Request Requests = new Request(firebase, userID);
 
 
             bool stop = false;
@@ -59,21 +76,22 @@ namespace Encrpytion_Prototype
                             break;
                         case 2:
                             Console.WriteLine("Pending Requests:");
-                            //Program test = new Program();
-                            //string[] requestID = await test.GetRequests(userID);
-                            //foreach (string request in requestID)
-                            //{
-                            //    Console.WriteLine(request);
-                            //}
-                            Requests.GetAll(userID);
+
+
+                            string[] requestID = await Requests.GetAll();
+                            foreach (string request in requestID)
+                            {
+                                Console.WriteLine(request);
+                            }
+
 
                             Console.WriteLine();
                             Console.WriteLine("Enter user to accept: ");
                             string acceptUser = Console.ReadLine();
                             if (acceptUser.Length > 0)
                             {
-
-                                Console.WriteLine("Done");
+                                string Data = Requests.GetData(acceptUser);
+                                Console.WriteLine($"Done: {Data}");
                             }
                             break;
                     }
@@ -93,7 +111,7 @@ namespace Encrpytion_Prototype
 
             Console.WriteLine();
 
-            BigInteger[] data = user1.Initilise(); // Send Friend Request
+            KeyData data = user1.Initilise(); // Send Friend Request
             //Server.Add(userID, data);
             user2.Respond(data);
             BigInteger secret2 = user2.getSharedKey(data, 1);
@@ -134,23 +152,48 @@ namespace Encrpytion_Prototype
 
     class Request
     {
-        List<KeyValuePair<string, KeyData>> requests = new List<KeyValuePair<string, KeyData>>();
+        Dictionary<string, KeyData> requests = new Dictionary<string, KeyData>();
+        String userID;
         public FirebaseClient firebase;
-        public Request(FirebaseClient p_firebase)
+        public Request(FirebaseClient p_firebase, string p_userID)
         {
+            userID = p_userID;
             firebase = p_firebase;
+            fillRequests(userID);
+
 
         }
 
+        private async Task fillRequests(string userID){
+            var child = firebase.Child("users").Child(userID).Child("requests");
+            var observable = child.AsObservable<KeyData>();
+            var items = await child.OnceAsync<KeyData>();
+            requests.Clear();
+            //Object[] types = items.GetType().GetMethods();
+            //Console.WriteLine(String.Join("\n", types));
+            //foreach (var item in items)
+            //{
+                //requests.Add(item.Key, item.Object);
+                //Console.WriteLine($"{item.Key}: {item.Object}");
+            //}
+            var subscription = observable
+                .Where(x => !string.IsNullOrEmpty(x.Key))
+                .Where(x => !requests.ContainsKey(x.Key))
+                .Subscribe(s => requests.Add(s.Key, s.Object));
+        }
 
-
-        public async Task GetAll(string userID) //<List<KeyValuePair<string, KeyData>>>
+        public async Task<String[]> GetAll() //<List<KeyValuePair<string, KeyData>>>
         {
-            var items = await firebase.Child("users").Child(userID).Child("requests").OnceAsync<KeyData>();
-            Object[] types = items.GetType().GetMethods();
-            Console.WriteLine(String.Join("\n", types));
-            
-            
+            if(requests.Count == 0){
+                Console.WriteLine("Requests incomplete, fetching again");
+                await fillRequests(userID);
+            }
+            return requests.Keys.ToArray();
+        }
+
+        public string GetData(string requestID)
+        {
+            return requests[requestID].Data;
         }
 
     }
@@ -193,7 +236,7 @@ namespace Encrpytion_Prototype
             }
         }
 
-        public BigInteger[] Initilise(int p_id = 14, int g = 5)       // Choose p,g and a
+        public KeyData Initilise(int p_id = 14, int g = 5)       // Choose p,g and a
         {
             // Prime (p): 
             prime = getPrime(p_id);
@@ -206,24 +249,26 @@ namespace Encrpytion_Prototype
             //A: Calculate public key
             BigInteger publicKey = getPublicKey();
 
-            return new BigInteger[] { prime, global, publicKey, 0 }; //{p, g, A, B}
+            return new KeyData(prime, g, publicKey, 0);
+            //return new BigInteger[] { prime, global, publicKey, 0 }; //{p, g, A, B}
         }
 
-        public BigInteger[] Respond(BigInteger[] data)         // Uses pre-calculated values for p and g to get B
+        public KeyData Respond(KeyData data)         // Uses pre-calculated values for p and g to get B
         {
-            prime = data[0];
-            global = data[1];
+            prime = data.prime;
+            global = data.g;
 
-            data[3] = getPublicKey();
+            data.B = getPublicKey();
             return data;
 
         }
 
-        public BigInteger getSharedKey(BigInteger[] data, int user)  // User 1: B^a  mod  p        User 2: A^b  mod  p      {p,g,A,B}
+        public BigInteger getSharedKey(KeyData data, int user)  // User 1: B^a  mod  p        User 2: A^b  mod  p      {p,g,A,B}
         {
-            if (user == 0) { user = 1; }
-            else { user = 0; }
-            return BigInteger.ModPow(data[user + 2], secret, prime);
+            BigInteger request_secret;
+            if (user == 0) { request_secret = data.B; }
+            else { request_secret = data.A; }
+            return BigInteger.ModPow(request_secret, secret, prime);
         }
 
         private BigInteger getPrime(int p_id)
