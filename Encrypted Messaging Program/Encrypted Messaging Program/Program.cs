@@ -10,7 +10,7 @@ using System.Reactive.Linq;
 
 
 //{ p, g, A, B}
-namespace Encrpytion_Prototype
+namespace Encryption_Prototype
 {
     /*public class KeyData
     {
@@ -39,25 +39,40 @@ namespace Encrpytion_Prototype
         public FirebaseClient firebase = new FirebaseClient("https://messaging-app-demo-348e5-default-rtdb.europe-west1.firebasedatabase.app/");
         public static void Main(string[] args)
         {
-            Console.WriteLine("\nInitilising DiffieHellman");
 
             Program test = new Program();
+
+            // Diffie Hellman Test:
             //test.testDH();
-            test.testAES();
-            //test.testRequest().Wait();
+            
+
+            // AES Test:
+            //test.testAES();
+            test.exampleAES();
+
+            
             Console.WriteLine("Test finished.....");
 
+            //test.testRequest().Wait();
             //new Program().SendRequest(userID, data).Wait();
 
         }
 
         private void testAES()
         {
-            BigInteger sharedKey = BigInteger.Parse("0E4723DB0E789861C3E3436D6CD9191C2059A8FFFE08FC3DC5991DF72F41EE465FB55BB030AD0F736EBACA87C4272DB53973FE7ACD9AFDAF3666337D9B46400DC02F4838AE697505DC7CC1E433375FDCB5191144AA1769015540ABDBC9A507B5630C9DD0D503A94F1CD6105241754D08F0C8D7496E22CC618E42BCB9A1C5EB4C90157759C330B8B53C3F2B17488C985F35D70163822644F79F73F710483660BCF03FB923CB57352173E68BE0A03A29CA3639FEA014767389355BA73324544E227", System.Globalization.NumberStyles.AllowHexSpecifier);
+            //BigInteger sharedKey = BigInteger.Parse("0E4723DB0E789861C3E3436D6CD9191C2059A8FFFE08FC3DC5991DF72F41EE465FB55BB030AD0F736EBACA87C4272DB53973FE7ACD9AFDAF3666337D9B46400DC02F4838AE697505DC7CC1E433375FDCB5191144AA1769015540ABDBC9A507B5630C9DD0D503A94F1CD6105241754D08F0C8D7496E22CC618E42BCB9A1C5EB4C90157759C330B8B53C3F2B17488C985F35D70163822644F79F73F710483660BCF03FB923CB57352173E68BE0A03A29CA3639FEA014767389355BA73324544E227", System.Globalization.NumberStyles.AllowHexSpecifier);
             String message = "Hello, this is a test message :)";
 
-            AES test = new AES(192, true);  // Using inbuilt function for now....
-            test.Encrypt(sharedKey, message);
+            AES test = new AES(256, true, "hex");  // Using inbuilt function for now....
+            test.Encrypt("E4723DB0E789861C3E3436D6CD9191C2059A8FFFE08FC3DC5991DF72F41EE465FB55BB030AD0F736EBACA87C4272DB53973FE7ACD9AFDAF3666337D9B46400DC02F4838AE697505DC7CC1E433375FDCB5191144AA1769015540ABDBC9A507B5630C9DD0D503A94F1CD6105241754D08F0C8D7496E22CC618E42BCB9A1C5EB4C90157759C330B8B53C3F2B17488C985F35D70163822644F79F73F710483660BCF03FB923CB57352173E68BE0A03A29CA3639FEA014767389355BA73324544E227", message);
+        }
+        private void exampleAES()
+        {
+            BigInteger sharedKey = BigInteger.Parse("2b7e", System.Globalization.NumberStyles.AllowHexSpecifier);//2b7e151628aed2a6abf7158809cf4f3c
+            String message = "Hello, this is an example message :)";
+            Console.WriteLine($"Encrypt({sharedKey}, {message})");
+            AES test = new AES(256, true, "hex");
+            test.Encrypt("603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4", message);
         }
 
         private async Task testRequest()
