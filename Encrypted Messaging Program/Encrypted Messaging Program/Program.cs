@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Reactive.Linq;
+using Google.Cloud.Firestore;
 
 
 //{ p, g, A, B}
@@ -40,16 +41,17 @@ namespace Encryption_Prototype
         public static void Main(string[] args)
         {
 
-            Program test = new Program();
+            //Program test = new Program();
 
             // Diffie Hellman Test:
             //test.testDH();
-            
-
             // AES Test:
             //test.testAES();
-            test.exampleAES();
+            //test.exampleAES();
 
+            
+            
+            
             
             Console.WriteLine("Test finished.....");
 
@@ -63,66 +65,24 @@ namespace Encryption_Prototype
             //BigInteger sharedKey = BigInteger.Parse("0E4723DB0E789861C3E3436D6CD9191C2059A8FFFE08FC3DC5991DF72F41EE465FB55BB030AD0F736EBACA87C4272DB53973FE7ACD9AFDAF3666337D9B46400DC02F4838AE697505DC7CC1E433375FDCB5191144AA1769015540ABDBC9A507B5630C9DD0D503A94F1CD6105241754D08F0C8D7496E22CC618E42BCB9A1C5EB4C90157759C330B8B53C3F2B17488C985F35D70163822644F79F73F710483660BCF03FB923CB57352173E68BE0A03A29CA3639FEA014767389355BA73324544E227", System.Globalization.NumberStyles.AllowHexSpecifier);
             String message = "Hello, this is a test message :)";
 
-            AES test = new AES(256, true, "hex");  // Using inbuilt function for now....
-            test.Encrypt("E4723DB0E789861C3E3436D6CD9191C2059A8FFFE08FC3DC5991DF72F41EE465FB55BB030AD0F736EBACA87C4272DB53973FE7ACD9AFDAF3666337D9B46400DC02F4838AE697505DC7CC1E433375FDCB5191144AA1769015540ABDBC9A507B5630C9DD0D503A94F1CD6105241754D08F0C8D7496E22CC618E42BCB9A1C5EB4C90157759C330B8B53C3F2B17488C985F35D70163822644F79F73F710483660BCF03FB923CB57352173E68BE0A03A29CA3639FEA014767389355BA73324544E227", message);
+            AES test = new AES(128, true, "hex");  // Using inbuilt function for now....
+            Byte[] result = test.Encrypt("2b7e151628aed2a6abf7158809cf4f3c", "theblockbreakers");
+            Console.WriteLine(test.Decrypt("2b7e151628aed2a6abf7158809cf4f3c", result));
         }
         private void exampleAES()
         {
             BigInteger sharedKey = BigInteger.Parse("2b7e", System.Globalization.NumberStyles.AllowHexSpecifier);//2b7e151628aed2a6abf7158809cf4f3c
             String message = "Hello, this is an example message :)";
             Console.WriteLine($"Encrypt({sharedKey}, {message})");
-            AES test = new AES(256, true, "hex");
-            test.Encrypt("603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4", message);
+            AES test = new AES(128, true, "hex");
+            string result = test.Decrypt("2b7e151628aed2a6abf7158809cf4f3c", "3925841d02dc09fbdc118597196a0b32", true);
+            //Byte[] result = test.Encrypt("2b7e151628aed2a6abf7158809cf4f3c", "3243f6a8885a308d313198a2e0370734", true);
+            Console.WriteLine($"Final Result: \n{result}");
         }
 
-        private async Task testRequest()
+        private string ByteToHex(byte[] input, string seperator = "")
         {
-            Console.Write("Enter your user ID:  ");
-            string userID = Console.ReadLine();
-            //new Program().GetRequests(userID).Wait();
-            Request Requests = new Request(firebase, userID);
-
-
-            bool stop = false;
-            while (!stop)
-            {
-                Console.WriteLine("--Menu--\n1) Send Request\n2) Accept Request\n3) Change user\n");
-                string choice = Console.ReadLine();
-                bool success = Int32.TryParse(choice, out int int_choice);
-                if (success && int_choice <= 3 && int_choice > 0)
-                {
-                    switch (int_choice)
-                    {
-                        case 1:
-                            Console.Write("Enter user:  ");
-                            string requestUser = Console.ReadLine();
-                            DiffieHellman user1 = new DiffieHellman(256);
-
-                            await SendRequest(userID, requestUser, user1.Initilise());
-                            break;
-                        case 2:
-                            Console.WriteLine("Pending Requests:");
-
-
-                            string[] requestID = await Requests.GetAll();
-                            foreach (string request in requestID)
-                            {
-                                Console.WriteLine(request);
-                            }
-
-
-                            Console.WriteLine();
-                            Console.WriteLine("Enter user to accept: ");
-                            string acceptUser = Console.ReadLine();
-                            if (acceptUser.Length > 0)
-                            {
-                                string Data = Requests.GetData(acceptUser).output();
-                                Console.WriteLine($"Done: {Data}");
-                            }
-                            break;
-                    }
-                }
-            }
+            return BitConverter.ToString(input).Replace("-", seperator);
         }
 
         private void testDH()
@@ -146,84 +106,65 @@ namespace Encryption_Prototype
             Console.WriteLine(secret1.ToString("X"));
         }
 
-        public async Task<string[]> GetRequests(string userID)
-        {
-            var items = firebase.Child("users").Child(userID).Child("requests").OnceAsync<KeyData>();
-
-            var requestID = new List<string>();
-
-            foreach (var pair in await items)
-            {
-                //Console.WriteLine($"{pair.Key} : {pair.Object}");
-                requestID.Add(pair.Key);
-            }
-            return requestID.ToArray();
-        }
-
-        /*public async Task<BigInteger[]> GetRequest(string userID, string requestID)
-        {
-            var items = firebase.Child("users").Child(userID).Child("requests").Child("").OnceAsync<KeyData>();
-
-            return items[requestID];
-            //https://bolorundurowb.com/posts/31/using-the-firebase-realtime-database-with-.net
-        }*/
-
-
-        private async Task SendRequest(string userID, String requestID, KeyData data)
-        {
-            await firebase.Child("users").Child(requestID).Child("requests").Child(userID).PostAsync(data);
-            Console.WriteLine("Done");
-        }
-
     }
 
-    class Request
+    class textMessagingApp
     {
-        Dictionary<string, KeyData> requests = new Dictionary<string, KeyData>();
-        String userID;
-        public FirebaseClient firebase;
-        public Request(FirebaseClient p_firebase, string p_userID)
+        public textMessagingApp()
         {
-            userID = p_userID;
-            firebase = p_firebase;
-            fillRequests(userID);
+            // Initilise server
+            Firestore server = new Firestore("encrypted-messaging-app");
+            server.GetUser("0000").Wait();
+            server.SetNewUser("0000", "password").Wait();
+            Console.WriteLine("--Messaging Program--\n1) Log in\n2) Register");
+            string choice = getInput("--Messaging Program--\n1) Log in\n2) Register", "Invalid choice given", new string[] { "1", "2" }, maxLength:1);
+            if (choice == "1")         // Log in
+            {
+                Console.WriteLine("--- Log-in ---");
+                string username = getInput("Username: ", "Invalid username given", sameLine: true, maxLength:15, minLength:5);
+                string password = getInput("Password: ", "Invalid password given", sameLine: true, maxLength:15, minLength:5);
 
-
-        }
-
-        private async Task fillRequests(string userID){
-            var child = firebase.Child("users").Child(userID).Child("requests");
-            var observable = child.AsObservable<KeyData>();
-            var items = await child.OnceAsync<KeyData>();
-            requests.Clear();
-            //Object[] types = items.GetType().GetMethods();
-            //Console.WriteLine(String.Join("\n", types));
-            //foreach (var item in items)
-            //{
-                //requests.Add(item.Key, item.Object);
-                //Console.WriteLine($"{item.Key}: {item.Object}");
-            //}
-            var subscription = observable
-                .Where(x => !string.IsNullOrEmpty(x.Key))
-                .Where(x => !requests.ContainsKey(x.Key))
-                .Subscribe(s => requests.Add(s.Key, s.Object));
-        }
-
-        public async Task<String[]> GetAll() //<List<KeyValuePair<string, KeyData>>>
-        {
-            if(requests.Count == 0){
-                Console.WriteLine("Requests incomplete, fetching again");
-                await fillRequests(userID);
             }
-            return requests.Keys.ToArray();
+            else if (choice == "2") // Register
+            {
+
+            }
+            else
+            {
+
+            }
+
         }
 
-        public KeyData GetData(string requestID)
+        public string getInput(string requestMsg, string errorMsg, string[] options = null, int maxLength = 100, int minLength = 0, bool sameLine = false)
         {
-            return requests[requestID];
+            bool valid = false;
+            string value = "";
+            while (!valid)
+            {
+                if (sameLine)
+                {
+                    Console.Write(requestMsg);
+                }
+                else
+                {
+                    Console.WriteLine(requestMsg);
+                }
+                
+                
+                value = Console.ReadLine();
+                
+                valid = true;
+                if ((options.Length > 0 && !options.Contains(value)) || (options.Length > maxLength || options.Length < minLength))
+                {
+                    valid = false;
+                    Console.WriteLine(errorMsg);
+                }
+            }
+            return value;
         }
-
     }
+
 
 }
 

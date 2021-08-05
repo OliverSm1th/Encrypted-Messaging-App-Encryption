@@ -47,9 +47,21 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "FirebaseAdmin": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "FirebaseAuthentication.net": {
+              "target": "Package",
+              "version": "[3.7.1, )"
+            },
             "FirebaseDatabase.net": {
               "target": "Package",
               "version": "[4.0.6, )"
+            },
+            "Google.Cloud.Firestore": {
+              "target": "Package",
+              "version": "[1.1.0-beta01, )"
             }
           },
           "imports": [
