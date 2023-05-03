@@ -44,7 +44,7 @@ namespace Encryption_Prototype
 
             Console.WriteLine("\n   Encryption:");
 
-            byte[] b_encryptedMessage = test.Encrypt(key.ToByteArray(), UnicodeToByteArr(input));
+            byte[] b_encryptedMessage = test.EncryptCBC(key.ToByteArray(), UnicodeToByteArr(input), new byte[16]);
 
             
 
@@ -52,9 +52,9 @@ namespace Encryption_Prototype
 
             Console.WriteLine($"Encrypted Message: {encryptedMessage.PadRight(25)} (Hex: {ByteArrToHex(b_encryptedMessage)})");
 
-            /*Console.WriteLine("\n   Decryption:");
+            Console.WriteLine("\n   Decryption:");
 
-            byte[] b_decryptedMessage = test.Decrypt(key.ToByteArray(), Base64ToByteArr(encryptedMessage));
+            byte[] b_decryptedMessage = test.EncryptCBC(key.ToByteArray(), Base64ToByteArr(encryptedMessage), new byte[16], true);
 
             string decryptedMessage = Encoding.Unicode.GetString(b_decryptedMessage).Replace("\0", String.Empty);
 
@@ -62,7 +62,7 @@ namespace Encryption_Prototype
 
 
             if (decryptedMessage == input) { Console.WriteLine("[TEST PASSED]\n\n"); }
-            else { Console.WriteLine($"[TEST FAILED]\n\n"); }*/
+            else { Console.WriteLine($"[TEST FAILED]\n\n"); }
             
         }
 
@@ -74,16 +74,6 @@ namespace Encryption_Prototype
             AES test = new AES(128, true, "hex");  // Using inbuilt function for now....
             //Byte[] result = test.Encrypt("2b7e151628aed2a6abf7158809cf4f3c", "theblockbreakers");
             //Console.WriteLine(test.Decrypt("2b7e151628aed2a6abf7158809cf4f3c", result));
-        }
-        private void exampleAES()
-        {
-            BigInteger sharedKey = BigInteger.Parse("2b7e", System.Globalization.NumberStyles.AllowHexSpecifier);//2b7e151628aed2a6abf7158809cf4f3c
-            String message = "Hello, this is an example message :)";
-            Console.WriteLine($"Encrypt({sharedKey}, {message})");
-            AES test = new AES(128, true, "hex");
-            string result = Encoding.Unicode.GetString(test.DecryptOld("2b7e151628aed2a6abf7158809cf4f3c", HexToByteArr("3925841d02dc09fbdc118597196a0b32")));
-            //Byte[] result = test.Encrypt("2b7e151628aed2a6abf7158809cf4f3c", "3243f6a8885a308d313198a2e0370734", true);
-            Console.WriteLine($"Final Result: \n{result}");
         }
 
         private static string ByteToHex(byte[] input, string seperator = "")

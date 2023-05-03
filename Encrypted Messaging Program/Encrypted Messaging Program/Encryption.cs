@@ -197,8 +197,8 @@ namespace Encryption_Prototype
 
         public bool b_debug;
         public string b_debug_type; // 64, hex, bin
-        //public string[] debug_Blacklist = new string[] { "ScheduleKey", "ScheduleFunction", "MixColumns", "InvMixColumns", "MixMultiply" };
-        public string[] debug_Blacklist = new string[] {"MixColumns", "InvMixColumns", "MixMultiply" };
+        public string[] debug_Blacklist = new string[] { "ScheduleKey", "ScheduleFunction", "MixColumns", "InvMixColumns", "MixMultiply" };
+        //public string[] debug_Blacklist = new string[] {"MixColumns", "InvMixColumns", "MixMultiply" };
         //public string[] debug_Blacklist = new string[] { };
 
 
@@ -300,40 +300,18 @@ namespace Encryption_Prototype
             debug($"Initilised AES({level}):\n    Key Index = {keyIndex}\n    Key Length = {keyLength}\n    Byte Key Length = {b_keyLength}\n    Key Rounds = {keyRounds}\n--------\n");
         }
 
-        // Main Encrypt Functions
-        public byte[] Encrypt(byte[] sharedKey, byte[] b_message, bool decrypt = false)
-        {
+        // AES Encryption Modes
+        public byte[] EncryptECB(byte[] sharedKey, byte[] b_message, bool decrypt = false)
+        {   // ECB- Insecure method of encryption, each byte is individually encrypted, no randomness
+
             //   --- KEY ---
-            // Hex Key -> Byte Key
-
-
-            // Resize key
-            if (sharedKey.Length < b_keyLength)
-            {
-                debug("Error: Shared Key is too small");
-                return new byte[0];
-            }
-            else if (sharedKey.Length > b_keyLength)
-            {
-                debug($"Decreased Shared Key size ({sharedKey.Length}->{b_keyLength})");
-                sharedKey = SHA256.Create().ComputeHash(sharedKey);
-                Array.Resize(ref sharedKey, b_keyLength);
-                debug($"New Key:  {ConvertByteArr(sharedKey)}");
-            }
-
-            // Enlarge key
+            resizeKey(ref sharedKey);
+            if(sharedKey.Length == 0) { return new byte[0]; }
             WordArr l_sharedKey = ScheduleKey(sharedKey);
 
-
-            // Resize message
-
-            if (b_message.Length % 16 > 0)
-            {
-                Array.Resize(ref b_message, ((b_message.Length / 16) + 1) * 16);
-            }
-
-
             //  --- MESSAGE ---
+            // Resize message
+            resizeMessage(ref b_message);
 
             // Split the message into 128-bit blocks (16-byte)
             byte[] cipher = new byte[Math.Max(b_message.Length, 16)];
@@ -363,7 +341,75 @@ namespace Encryption_Prototype
 
             return cipher;
         }
+        public byte[] EncryptCBC(byte[] sharedKey, byte[] b_message, byte[] iv, bool decrypt = false)
+        {   // CBC- Uses an initialization vector (iv) to introduce randomness, each block is based on other blocks
 
+            //   --- KEY ---
+            resizeKey(ref sharedKey);
+            if (sharedKey.Length == 0) { return new byte[0]; }
+            WordArr l_sharedKey = ScheduleKey(sharedKey);
+
+            //  --- MESSAGE ---
+            // Resize message
+            resizeMessage(ref b_message);
+
+            byte[] cipher = new byte[Math.Max(b_message.Length, 16)];
+            byte[] message_128 = new byte[16];
+            byte[] b_last_cipher = iv;
+            for (int i = 0; i < b_message.Length; i++)
+            {
+                message_128[i % 16] = b_message[i];
+                if (i % 16 == 15)
+                {
+                    if(decrypt)
+                    {
+                        ByteXOR(DecryptByte(l_sharedKey, message_128), b_last_cipher).CopyTo(cipher, i - 15);
+                        b_last_cipher = message_128;
+                        message_128 = new byte[16];
+                    } 
+                    else
+                    {
+                        message_128 = ByteXOR(message_128, b_last_cipher);
+
+                        b_last_cipher = EncryptByte(l_sharedKey, message_128);
+
+                        b_last_cipher.CopyTo(cipher, i - 15);
+                        message_128 = new byte[16];
+                    }
+                }
+            }
+
+            return cipher;
+        }
+
+        private byte[] resizeKey(ref byte[] sharedKey)
+        {
+            // Resize key
+            if (sharedKey.Length < b_keyLength)
+            {
+                debug("Error: Shared Key is too small");
+                return new byte[0];
+            }
+            else if (sharedKey.Length > b_keyLength)
+            {
+                debug($"Decreased Shared Key size ({sharedKey.Length}->{b_keyLength})");
+                sharedKey = SHA256.Create().ComputeHash(sharedKey);
+                Array.Resize(ref sharedKey, b_keyLength);
+                debug($"New Key:  {ConvertByteArr(sharedKey)}");
+            }
+
+            return sharedKey;
+        }
+        private byte[] resizeMessage(ref byte[] b_message)
+        {
+            if (b_message.Length % 16 > 0)
+            {
+                Array.Resize(ref b_message, ((b_message.Length / 16) + 1) * 16);
+            }
+            return b_message;
+        }
+
+        // Main Encrypt/Decrypt Functions
         private byte[] EncryptByte(WordArr sharedKey, byte[] message) // Main Encryption Method
         {
             //WordArr sharedKey = new WordArr(l_sharedKey, this);
@@ -401,70 +447,6 @@ namespace Encryption_Prototype
             return message;
         }
 
-        // Main Decrypt Functions
-        public byte[] Decrypt(byte[] sharedKey, byte[] cipher)
-        {
-            // As the decrypt function is so similar to the encrypt function just with a different function called at the end,
-            // I call the Encrypt function, with the bool at the end signifying it's decrypt
-            return Encrypt(sharedKey, cipher, true);
-        }
-
-        public byte[] DecryptOld(string s_key, byte[] cipher, bool hexCipher = false)
-        {
-            //   --- KEY ---
-            // Hex Key -> Byte Key
-            int x = 0;
-            byte[] sharedKey = new byte[s_key.Length / 2];
-            for (int i = 0; i < s_key.Length; i += 2)
-            {
-                int d_key = Convert.ToInt32(s_key.Substring(i, 2), 16);
-                sharedKey[x] = Convert.ToByte(d_key);
-                x++;
-            }
-
-            // Resize key
-            if (sharedKey.Length < b_keyLength)
-            {
-                debug("Error: Shared Key is too small");
-                return new byte[0];
-            }
-            else if (sharedKey.Length > b_keyLength)
-            {
-                debug($"Decreased Shared Key size ({sharedKey.Length}->{b_keyLength})");
-                sharedKey = SHA256.Create().ComputeHash(sharedKey);
-                Array.Resize(ref sharedKey, b_keyLength);
-                debug($"New Key:  {ConvertByteArr(sharedKey)}");
-            }
-
-            // Enlarge key
-            WordArr l_sharedKey = ScheduleKey(sharedKey);
-
-
-            byte[] b_message = new byte[cipher.Length];
-            byte[] cipher_128 = new byte[16];
-            for (int i = 0; i < cipher.Length; i++)
-            {
-                cipher_128[i % 16] = cipher[i];
-                if (i % 16 == 15) // Reached end of 126-bit message
-                {
-                    debug($"Sub-Message {i / 16}:");
-                    DecryptByte(l_sharedKey, cipher_128).CopyTo(b_message, i - 15);
-
-
-                    cipher_128 = new byte[16];
-                }
-            }
-            if (b_message.Length % 16 > 0)
-            {
-                DecryptByte(l_sharedKey, cipher_128).Take(b_message.Length % 16).ToArray().CopyTo(b_message, b_message.Length - 15);
-                debug($"Sub-Message {cipher.Length / 16}:");
-            }
-
-
-
-
-            return DecryptByte(l_sharedKey, cipher);
-        }
         private byte[] DecryptByte(WordArr sharedKey, byte[] cipher)
         {
             debug($"Decrypt Sub-Message:\n{OutputMessageArr(cipher)}");

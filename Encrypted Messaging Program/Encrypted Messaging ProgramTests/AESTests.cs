@@ -34,14 +34,14 @@ namespace AESTest
         }
     }
     [TestClass]
-    public class EncryptionTests
+    public class EncryptionECBTests
     {// From the official documentation https://csrc.nist.gov/csrc/media/publications/fips/197/final/documents/fips-197.pdf (see Apendix B+C)
         [TestMethod]
         public void EncryptionB_128()
         {
             byte[] key = HexToByteArr("2b7e151628aed2a6abf7158809cf4f3c");
             byte[] message = HexToByteArr("3243f6a8885a308d313198a2e0370734");
-            Byte[] result = new AES(128).Encrypt(key, message);
+            Byte[] result = new AES(128).EncryptECB(key, message);
 
             string expected = "3925841d02dc09fbdc118597196a0b32";
             Assert.AreEqual(expected, ByteArrToHex(result).ToLower());
@@ -55,7 +55,7 @@ namespace AESTest
             Byte[] result;
 
             for (int i=0; i<keys.Length; i++)
-            {   result = new AES(types[i]).Encrypt(HexToByteArr(keys[i]), HexToByteArr(messages[i]));
+            {   result = new AES(types[i]).EncryptECB(HexToByteArr(keys[i]), HexToByteArr(messages[i]));
                 Assert.AreEqual(expected[i], ByteArrToHex(result).ToLower(), $"Failed C{i} Encryption Test ({types[i]})");
                 Console.WriteLine($"Passed C{i} Encryption Test ({types[i]})");
             }
@@ -64,13 +64,13 @@ namespace AESTest
         
     }
     [TestClass]
-    public class DecryptionTests
+    public class DecryptionECBTests
     {   // From the official documentation https://csrc.nist.gov/csrc/media/publications/fips/197/final/documents/fips-197.pdf (see Apendix B+C)
         [TestMethod]
         public void DecryptionB_128() {
             string key = "2b7e151628aed2a6abf7158809cf4f3c";
             string cipher = "3925841d02dc09fbdc118597196a0b32";
-            string result = ByteArrToHex(new AES(128).Decrypt(HexToByteArr(key), HexToByteArr(cipher)));
+            string result = ByteArrToHex(new AES(128).EncryptECB(HexToByteArr(key), HexToByteArr(cipher), true));  // Decrypt the cipher
 
             string expected = "3243f6a8885a308d313198a2e0370734";
             Assert.AreEqual(expected, result.ToLower());
@@ -87,7 +87,7 @@ namespace AESTest
 
             for (int i = 0; i < keys.Length; i++)
             {
-                result = ByteArrToHex(new AES(types[i]).Decrypt(HexToByteArr(keys[i]), HexToByteArr(ciphers[i])));
+                result = ByteArrToHex(new AES(types[i]).EncryptECB(HexToByteArr(keys[i]), HexToByteArr(ciphers[i]), true));
                 Assert.AreEqual(expected[i], result.ToLower(), $"Failed C{i} Decryption Test ({types[i]})");
                 Console.WriteLine($"Passed C{i} Decryption Test ({types[i]})");
             }
@@ -113,14 +113,14 @@ namespace AESTest
                 {
                     string inputMessage = generateString(i);
 
-                    byte[] b_encryptedMessage = aes.Encrypt(b_key, UnicodeToByteArr(inputMessage));
+                    byte[] b_encryptedMessage = aes.EncryptECB(b_key, UnicodeToByteArr(inputMessage));
 
                     string encryptedMessage = ByteArrToBase64(b_encryptedMessage);
 
                     // Sent as message \/
 
 
-                    byte[] b_decryptedMessage = aes.Decrypt(b_key, Base64ToByteArr(encryptedMessage));
+                    byte[] b_decryptedMessage = aes.EncryptECB(b_key, Base64ToByteArr(encryptedMessage), true);  // decrypt cipher
 
                     string decryptedMessage = Encoding.Unicode.GetString(b_decryptedMessage).Replace("\0", String.Empty);
                    
