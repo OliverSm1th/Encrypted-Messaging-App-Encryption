@@ -197,7 +197,7 @@ namespace Encryption_Prototype
 
         public bool b_debug;
         public string b_debug_type; // 64, hex, bin
-        public string[] debug_Blacklist = new string[] { "ScheduleKey", "ScheduleFunction", "MixColumns", "InvMixColumns", "MixMultiply" };
+        public string[] debug_Blacklist = new string[] { "ScheduleKey", "ScheduleFunction", "MixColumns", "InvMixColumns", "MixMultiply", "EncryptByte", "DecryptByte" };
         //public string[] debug_Blacklist = new string[] {"MixColumns", "InvMixColumns", "MixMultiply" };
         //public string[] debug_Blacklist = new string[] { };
 
@@ -426,7 +426,7 @@ namespace Encryption_Prototype
 
             for (int roundNum = 1; roundNum < (keyRounds + 1); roundNum++)
             {
-                debug($"\n\n --- Round {roundNum} ---\n{OutputMessageArr(message)}", true);
+                debug($"\n\n --- Round {roundNum} ---\n{OutputMessageArr(message)}", true, "RoundNum");
                 currentKey = sharedKey.GetWords(4 * roundNum, 4 * (roundNum + 1));
 
                 SubBytes(ref message);
@@ -458,7 +458,7 @@ namespace Encryption_Prototype
 
             for (int roundNum = 0; roundNum < (keyRounds); roundNum++)
             {
-                debug($"\n\n --- Round {roundNum} ---\n{OutputMessageArr(cipher)}", true);
+                debug($"\n\n --- Round {roundNum} ---\n{OutputMessageArr(cipher)}", true, "RoundNum");
                 currentKey = sharedKey.GetWords(sharedKey.GetLength(0) - 4 * (roundNum + 1), sharedKey.GetLength(0) - 4 * roundNum);
 
                 cipher = ByteXOR(cipher, currentKey);
@@ -629,7 +629,7 @@ namespace Encryption_Prototype
 
             for (int i = 0; i < message.Length / 4; i++)
             {
-                if (i % 4 == 0) { debug(""); } // New Line
+                if (i % 4 == 0) { output+="\n"; } // New Line
                 byte num1 = message[i];
                 byte num2 = new byte();
                 byte num3 = new byte();
