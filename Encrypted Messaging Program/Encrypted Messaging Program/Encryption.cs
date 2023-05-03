@@ -2,22 +2,21 @@
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 
 
-
-
-
-
 namespace Encryption_Prototype
 {
+
     public class KeyData
     {
         public BigInteger prime { get; set; }
         public int global { get; set; }
         public BigInteger A_Key { get; set; }
         public BigInteger B_Key { get; set; }
+        public KeyData() { }
         public KeyData(BigInteger p, int g, BigInteger secret, int userNum)
         {
             prime = p;
@@ -30,6 +29,7 @@ namespace Encryption_Prototype
             return $"Prime: {prime}\nGlobal: {global}\nA Key: {A_Key}\nB Key: {B_Key}";
         }
     }
+
 
     public class DiffieHellman
     {
@@ -54,7 +54,7 @@ namespace Encryption_Prototype
         };
 
         public DiffieHellman(int secret_size = 256, bool p_debug = false, char player_char = '\0')   // (Both users) Generates user secret
-        { 
+        {
             // Create user secret
             byte[] b_secret = new byte[secret_size];
             rngCsp.GetBytes(b_secret);
@@ -63,8 +63,13 @@ namespace Encryption_Prototype
             debug = p_debug; p_char = player_char;
             if (debug) { Console.WriteLine($"User {p_char} Secret Key: {userKey}"); }
         }
+        public DiffieHellman(BigInteger privateKey)   // Setting DH from local storage
+        {
+            // Save user secret
+            userKey = privateKey;
+        }
 
-        public KeyData Initilise(int p_id=14, int g = 5)                                             // (First user) Initilise Prime and Global values  |  Calculate their public key- A
+        public KeyData Initilise(int p_id = 14, int g = 5)                                             // (First user) Initilise Prime and Global values  |  Calculate their public key- A
         {
             // Prime (p): 
             prime = getPrime(p_id);
@@ -76,7 +81,8 @@ namespace Encryption_Prototype
             BigInteger publicKey = getPublicKey();
             user = 0;
 
-            if (debug){
+            if (debug)
+            {
                 Console.WriteLine($"\n---Initilise--     (User {p_char})");
                 Console.WriteLine($"Prime(p): {prime.ToByteArray().Length} bytes");
                 Console.WriteLine($"Base(g): {g}");
@@ -94,7 +100,8 @@ namespace Encryption_Prototype
             user = 1;
             data.B_Key = publicKey;
 
-            if (debug) {
+            if (debug)
+            {
                 Console.WriteLine($"\n---Respond---   (User {p_char})");
                 Console.WriteLine("Defined public variables");
                 Console.WriteLine($"User {p_char} Public Key: {publicKey.ToString("X")}");
@@ -107,9 +114,9 @@ namespace Encryption_Prototype
         {
             BigInteger request_secret;
             if (user == 0) { request_secret = data.B_Key; }
-            else { request_secret = data.A_Key;  }
+            else { request_secret = data.A_Key; }
 
-            BigInteger sharedKey = BigInteger.ModPow(request_secret, userKey, prime);
+            BigInteger sharedKey = BigInteger.ModPow(request_secret, userKey, data.prime);
             if (debug) { Console.WriteLine($"Shared Key calculated by {p_char}: {sharedKey}"); }
 
             return sharedKey;
@@ -128,16 +135,21 @@ namespace Encryption_Prototype
             BigInteger publicKey = BigInteger.ModPow(global, userKey, prime);
             return publicKey;
         }
-        
+
+        public BigInteger getPrivateKey()        // Get private key for storing locally on device
+        {
+            return userKey;
+        }
+
         public void setPrivateKey(BigInteger newKey)  // TEST ONLY
-        {  userKey = newKey;  }
+        { userKey = newKey; }
     }
 
 
     public class AES
     {                   // Bytes:   16   24   32 
-        public int[] lengths  =  { 128, 192, 256 };
-        public int[] rounds =    { 10, 12, 14 };
+        public int[] lengths = { 128, 192, 256 };
+        public int[] rounds = { 10, 12, 14 };
         public int keyIndex;     // 0,1,2
         public int keyLength;    // Length of key in bits: 128, 192, 256
         public int b_keyLength;  // Length of key in bytes: 16, 24, 32
@@ -185,7 +197,8 @@ namespace Encryption_Prototype
 
         public bool b_debug;
         public string b_debug_type; // 64, hex, bin
-        public string[] debug_Blacklist = new string[] {"ScheduleKey", "ScheduleFunction",    "MixColumns", "InvMixColumns", "MixMultiply" };
+        //public string[] debug_Blacklist = new string[] { "ScheduleKey", "ScheduleFunction", "MixColumns", "InvMixColumns", "MixMultiply" };
+        public string[] debug_Blacklist = new string[] {"MixColumns", "InvMixColumns", "MixMultiply" };
         //public string[] debug_Blacklist = new string[] { };
 
 
@@ -271,13 +284,10 @@ namespace Encryption_Prototype
         }
 
 
-
-
-
-        public AES(int level=192, bool p_debug=false, string debug_type = "64") // Constructor
+        public AES(int level = 192, bool p_debug = false, string debug_type = "64") // Constructor
         {
             keyIndex = Array.IndexOf(lengths, level);
-            if(keyIndex == -1) { keyIndex = 1; }
+            if (keyIndex == -1) { keyIndex = 1; }
 
             keyLength = lengths[keyIndex];
             b_keyLength = keyLength / 8;
@@ -291,18 +301,11 @@ namespace Encryption_Prototype
         }
 
         // Main Encrypt Functions
-        public byte[] Encrypt( string s_key, string message, bool hexMessage = false, bool decrypt = false)
+        public byte[] Encrypt(byte[] sharedKey, byte[] b_message, bool decrypt = false)
         {
             //   --- KEY ---
             // Hex Key -> Byte Key
-            int x=0;
-            byte[] sharedKey = new byte[s_key.Length / 2];
-            for (int i=0; i< s_key.Length; i += 2)
-            {
-                int d_key = Convert.ToInt32(s_key.Substring(i, 2), 16);
-                sharedKey[x] = Convert.ToByte(d_key);
-                x++;
-            }
+
 
             // Resize key
             if (sharedKey.Length < b_keyLength)
@@ -322,33 +325,23 @@ namespace Encryption_Prototype
             WordArr l_sharedKey = ScheduleKey(sharedKey);
 
 
+            // Resize message
+
+            if (b_message.Length % 16 > 0)
+            {
+                Array.Resize(ref b_message, ((b_message.Length / 16) + 1) * 16);
+            }
+
 
             //  --- MESSAGE ---
-            // Convert message to byte
-            byte[] b_message;
-            if (!hexMessage) // If it's given as a normal string:
-            {
-                b_message = Encoding.Unicode.GetBytes(message);
-            }
-            else  // If it's given as a hex string
-            {
-                x = 0;
-                b_message = new byte[message.Length/2];
-                for (int i = 0; i < message.Length; i += 2)
-                {
-                    int d_message = Convert.ToInt32(message.Substring(i, 2), 16);
-                    b_message[x] = Convert.ToByte(d_message);
-                    x++;
-                }
-            }
-            
+
             // Split the message into 128-bit blocks (16-byte)
-            byte[] cipher = new byte[b_message.Length];
+            byte[] cipher = new byte[Math.Max(b_message.Length, 16)];
             byte[] message_128 = new byte[16];
-            for (int i=0; i < b_message.Length; i++)
+            for (int i = 0; i < b_message.Length; i++)
             {
                 message_128[i % 16] = b_message[i];
-                if(i % 16 == 15) // Reached end of 126-bit message
+                if (i % 16 == 15) // Reached end of 126-bit message
                 {
                     debug($"Sub-Message {i / 16}:");
                     if (decrypt)
@@ -359,29 +352,18 @@ namespace Encryption_Prototype
                     {
                         EncryptByte(l_sharedKey, message_128).CopyTo(cipher, i - 15);
                     }
-                    
+
 
                     message_128 = new byte[16];
                 }
+                debug($"{i}");
             }
-            if(b_message.Length % 16 > 0)
-            {
-                EncryptByte(l_sharedKey, message_128)[..(b_message.Length % 16)].CopyTo(cipher, cipher.Length-15);
-                if (decrypt)
-                {
-                    DecryptByte(l_sharedKey, message_128)[..(b_message.Length % 16)].CopyTo(cipher, cipher.Length - 15);
-                }
-                else
-                {
-                    EncryptByte(l_sharedKey, message_128)[..(b_message.Length % 16)].CopyTo(cipher, cipher.Length - 15);
-                }
+            debug($"All 128-bit segments added: {ConvertByteArr(cipher)}");
 
-                debug($"Sub-Message {b_message.Length / 16}:");
-            }
-            
 
             return cipher;
         }
+
         private byte[] EncryptByte(WordArr sharedKey, byte[] message) // Main Encryption Method
         {
             //WordArr sharedKey = new WordArr(l_sharedKey, this);
@@ -396,13 +378,12 @@ namespace Encryption_Prototype
             message = ByteXOR(message, currentKey);
             debug($"  Message XOR {ConvertByteArr(currentKey)} -> \n{OutputMessageArr(message)}", true);
 
-            for(int roundNum=1; roundNum < (keyRounds+1); roundNum++)
+            for (int roundNum = 1; roundNum < (keyRounds + 1); roundNum++)
             {
                 debug($"\n\n --- Round {roundNum} ---\n{OutputMessageArr(message)}", true);
                 currentKey = sharedKey.GetWords(4 * roundNum, 4 * (roundNum + 1));
 
                 SubBytes(ref message);
-                //debug($"  SubBytes: {ConvertByteArr(oldmessage)} -> {ConvertByteArr(message)}");
                 debug($"  SubBytes:\n{OutputMessageArr(message)}");
 
                 ShiftRows(ref message);
@@ -421,26 +402,14 @@ namespace Encryption_Prototype
         }
 
         // Main Decrypt Functions
-        public string Decrypt(string s_key, string cipher, bool hexCipher = false)
+        public byte[] Decrypt(byte[] sharedKey, byte[] cipher)
         {
-            // As the decrypt function is so simular to the encrypt function just with a different function called at the end,
+            // As the decrypt function is so similar to the encrypt function just with a different function called at the end,
             // I call the Encrypt function, with the bool at the end signifying it's decrypt
-            byte[] result = Encrypt(s_key, cipher, hexCipher, true);
-            
-            string message;
-
-            if (!hexCipher) // If it's given as a normal string:
-            {
-                message = Encoding.Unicode.GetString(result);
-            }
-            else  // If it's given as a hex string
-            {
-                message = ByteToHex(result);
-            }
-
-            return message;
+            return Encrypt(sharedKey, cipher, true);
         }
-        public string Decrypt(string s_key, byte[] cipher, bool hexCipher = false)
+
+        public byte[] DecryptOld(string s_key, byte[] cipher, bool hexCipher = false)
         {
             //   --- KEY ---
             // Hex Key -> Byte Key
@@ -457,7 +426,7 @@ namespace Encryption_Prototype
             if (sharedKey.Length < b_keyLength)
             {
                 debug("Error: Shared Key is too small");
-                return "";
+                return new byte[0];
             }
             else if (sharedKey.Length > b_keyLength)
             {
@@ -487,29 +456,14 @@ namespace Encryption_Prototype
             }
             if (b_message.Length % 16 > 0)
             {
-                DecryptByte(l_sharedKey, cipher_128)[..(cipher.Length % 16)].CopyTo(b_message, b_message.Length - 15);
+                DecryptByte(l_sharedKey, cipher_128).Take(b_message.Length % 16).ToArray().CopyTo(b_message, b_message.Length - 15);
                 debug($"Sub-Message {cipher.Length / 16}:");
             }
 
 
 
 
-            byte[] result = DecryptByte(l_sharedKey, cipher);
-
-
-
-            string message;
-
-            if (!hexCipher) // If it's given as a normal string:
-            {
-                message = Encoding.Unicode.GetString(result);
-            }
-            else  // If it's given as a hex string
-            {
-                message = ByteToHex(result);
-            }
-
-            return message;
+            return DecryptByte(l_sharedKey, cipher);
         }
         private byte[] DecryptByte(WordArr sharedKey, byte[] cipher)
         {
@@ -555,12 +509,12 @@ namespace Encryption_Prototype
 
             return cipher;
         }
-        
+
         // --- Schedule ---
         public WordArr ScheduleKey(Byte[] sharedKey)                  // Calculates + splits the keys for the encryption ahead
         {
             int length = ((wordsPerRound) + (4 * keyRounds));
-            if(keyLength == 192) { length -= 2; }
+            if (keyLength == 192) { length -= 2; }
             else if (keyLength == 256) { length -= 4; }
             Byte[,] b_Words = new byte[length, 4];   // Length of words: [44, 54, 64] - (Note that not all are required)   
             WordArr Words = new WordArr(b_Words, this);
@@ -572,11 +526,12 @@ namespace Encryption_Prototype
 
             //tex: Key for Round 0: Split key into 4/6/8 words
             //$$\{w_0, w_1,w_2,w_3\}\ \ \text{  (for 128)}$$
-            for (int i=0; i< (wordsPerRound); i++){
+            for (int i = 0; i < (wordsPerRound); i++)
+            {
                 Byte[] Word = new byte[4];
-                for(int j=0; j<4; j++){
+                for (int j = 0; j < 4; j++)
+                {
                     Word[j] = sharedKey[(4 * i) + j];
-                    //Words[i, j] = sharedKey[(4 * i) + j];
                 }
                 Words.SetWord(Word, i);
             }
@@ -584,21 +539,21 @@ namespace Encryption_Prototype
             debug(Words.Output(), true);
 
             LastHeadWord = Words.GetWord(3);
-            PreviousWord = Words.GetWord(wordsPerRound-1);
+            PreviousWord = Words.GetWord(wordsPerRound - 1);
 
             int currentWordNum = wordsPerRound;
 
             // Keys for next Rounds: 4 words each
-            for (int i=1; i<= keyRounds; i++) //
+            for (int i = 1; i <= keyRounds; i++) //
             {
                 debug($"\nKey Schedule Round {i} \nw{currentWordNum}-Generate headword (word 0)"); // Current Word = i*(wordsPerRound)
                 // Generate next head word
 
                 //tex:$$w_{i+4}=w_i\otimes g(w_{i+3})$$
 
-                Byte[] g_Previous = ScheduleFunction(  (byte[]) PreviousWord.Clone(), i); //  g(lastWord)
+                Byte[] g_Previous = ScheduleFunction((byte[])PreviousWord.Clone(), i); //  g(lastWord)
 
-                Byte[] XOR_Result = ByteXOR(g_Previous, Words.GetWord(currentWordNum- wordsPerRound));
+                Byte[] XOR_Result = ByteXOR(g_Previous, Words.GetWord(currentWordNum - wordsPerRound));
                 debug($"    {ConvertByteArr(g_Previous)} XOR {ConvertByteArr(Words.GetWord(currentWordNum - wordsPerRound))} -> {ConvertByteArr(XOR_Result)}");
 
                 PreviousWord = Words.SetWord(XOR_Result, i * wordsPerRound);
@@ -608,40 +563,39 @@ namespace Encryption_Prototype
                     Console.WriteLine("Reached end!!!");
                     break;
                 }
-                //else { Console.WriteLine(currentWordNum); }
 
                 // Generate other 3/5/7 words
                 //tex:$$w_{i+5}=w_{i+4}\otimes w_{i+1}\\w_{i+6}=w_{i+5}\otimes w_{i+2}\\w_{i+7}=w_{i+6}\otimes w_{i+3}$$
-                for (int j=1; j< (wordsPerRound); j++)
+                for (int j = 1; j < (wordsPerRound); j++)
                 {
                     debug($"w{currentWordNum}-Generate word {j}");
 
-                    if(keyLength == 256 && j == 4) { 
+                    if (keyLength == 256 && j == 4)
+                    {
                         //Console.WriteLine("")
-                        byte[] OldWord = (byte[]) PreviousWord.Clone();
+                        byte[] OldWord = (byte[])PreviousWord.Clone();
                         SubBytes(ref PreviousWord);
                         debug($"    Substitute: {ConvertByteArr(OldWord)}->{ConvertByteArr(PreviousWord)}");
                     }
 
-                    XOR_Result = ByteXOR( PreviousWord , Words.GetWord(((i-1) * wordsPerRound) + j));
-                    debug($"    {ConvertByteArr(PreviousWord)} XOR {ConvertByteArr(Words.GetWord(((i-1)* (wordsPerRound)) +j))} -> {ConvertByteArr(XOR_Result)} (w{currentWordNum - 1} XOR w{currentWordNum- wordsPerRound})");
-                    
+                    XOR_Result = ByteXOR(PreviousWord, Words.GetWord(((i - 1) * wordsPerRound) + j));
+                    debug($"    {ConvertByteArr(PreviousWord)} XOR {ConvertByteArr(Words.GetWord(((i - 1) * (wordsPerRound)) + j))} -> {ConvertByteArr(XOR_Result)} (w{currentWordNum - 1} XOR w{currentWordNum - wordsPerRound})");
+
                     PreviousWord = Words.SetWord(XOR_Result, currentWordNum);
                     currentWordNum++;
-                    if (Words.GetLength(0) == currentWordNum){ break; }
-                    //else { Console.WriteLine(Words.GetLength(0) ); }
+                    if (Words.GetLength(0) == currentWordNum) { break; }
                 }
-                if (Words.GetLength(0) == currentWordNum){break;}
+                if (Words.GetLength(0) == currentWordNum) { break; }
             }
 
             debug(Words.Output(true), true);
             return Words;
-        } 
+        }
         private Byte[] ScheduleFunction(Byte[] Word, int RoundNum)   // return Byte
         {
             //tex:$w_{i+4}=w_i\otimes g(w_{i+3})$
             //$$g(w_{i+3})\rightarrow S\Big( LeftShift(w_{i+3})\Big)\otimes [RC(i), 00, 00, 00]$$
-            Byte[] oldWord = (Byte[]) Word.Clone();
+            Byte[] oldWord = (Byte[])Word.Clone();
 
             //tex: One-byte left circular roation
             //$$[b_0,b_1, b_2, b_3]\Rightarrow [b_1,b_2,b_3,b_0]$$
@@ -655,8 +609,8 @@ namespace Encryption_Prototype
             debug($"    Substitute: {ConvertByteArr(oldWord)}->{ConvertByteArr(Word)}");
             oldWord = (Byte[])Word.Clone();
             byte RoundConstant = RConst(RoundNum);
-            Word = new byte[] { (byte) (RoundConstant ^ Word[0]), Word[1], Word[2], Word[3] };
-            debug($"    {ConvertByteArr(oldWord)} XOR {ConvertByteArr(new byte[] {RoundConstant})} -> {ConvertByteArr(Word)} ");
+            Word = new byte[] { (byte)(RoundConstant ^ Word[0]), Word[1], Word[2], Word[3] };
+            debug($"    {ConvertByteArr(oldWord)} XOR {ConvertByteArr(new byte[] { RoundConstant })} -> {ConvertByteArr(Word)} ");
             return Word;
         }
         public byte RConst(int num)
@@ -676,7 +630,7 @@ namespace Encryption_Prototype
         public byte[] LeftShift(ref byte[] Word)   // Circular left rotation
         {
             byte temp = Word[0];
-            for (int i=0; i<Word.Length-1; i++)
+            for (int i = 0; i < Word.Length - 1; i++)
             {
                 Word[i] = Word[i + 1];
             }
@@ -685,13 +639,13 @@ namespace Encryption_Prototype
             return Word;
         }
 
-       // --- Encrypt Sub-Functions ---
+        // --- Encrypt Sub-Functions ---
         public string OutputMessageArr(byte[] message)
         {
             //tex:Message 128:$$b_0\ \ |\ b_4\ \ |\ b_8\ \ |\ b_{12} \\b_1\ \ |\ b_5\ \ |\ b_9\ \ |\ b_{13}\\b_2\ \ |\ b_6\ \ |\ b_9\ \ |\ b_{14}\\b_3\ \ |\ b_7\ \ |\ b_{10}\ |\ b_{15}$$
             string output = "";
 
-            for (int i = 0; i < message.Length/4; i++)
+            for (int i = 0; i < message.Length / 4; i++)
             {
                 if (i % 4 == 0) { debug(""); } // New Line
                 byte num1 = message[i];
@@ -703,11 +657,11 @@ namespace Encryption_Prototype
                 if (i + 12 <= message.Length) { num4 = message[i + 12]; }
                 output += $"{ByteToHex(new byte[] { num1, num2, num3, num4 }, " | ")}" + "\n";
             }
-            return output.Substring(0, output.Length-1);
+            return output.Substring(0, output.Length - 1);
         }
 
         private void SubBytes(ref Byte[] Word) // Substitute each byte of the word using the S-Box
-       {
+        {
             for (int i = 0; i < Word.Length; i++)
             {
                 int x = (Word[i] & 0xF0) >> 4;
@@ -716,13 +670,13 @@ namespace Encryption_Prototype
                 Word[i] = (byte)s_box[x, y];
             }
             //debug($"Substituted {ConvertByteArr(OldWord)} for {ConvertByteArr(Word)}");
-       }
+        }
         private void ShiftRows(ref Byte[] Word) // Shifts each row a dfferent amount 0,1,2,3
         {
             int newIndex;
             Byte[] newWord = (Byte[])Word.Clone();
 
-            for(int oldIndex=0; oldIndex<Word.Length; oldIndex++)
+            for (int oldIndex = 0; oldIndex < Word.Length; oldIndex++)
             {
                 newIndex = (oldIndex - ((oldIndex % 4) * 4));
                 if (newIndex < 0) { newIndex = 16 + newIndex; }
@@ -730,16 +684,16 @@ namespace Encryption_Prototype
                 newWord[newIndex] = Word[oldIndex];
             }
             Word = newWord;
-        }       
+        }
         private void MixColumns(ref Byte[] Word)
         {
             Byte[] oldWord = (Byte[])Word.Clone();
 
-            byte[,] leftMatrix = new byte[4, 4] { { 2,3,1,1 }, { 1,2,3,1 }, { 1,1,2,3 }, { 3,1,1,2 } };
+            byte[,] leftMatrix = new byte[4, 4] { { 2, 3, 1, 1 }, { 1, 2, 3, 1 }, { 1, 1, 2, 3 }, { 3, 1, 1, 2 } };
 
-            for (int x=0; x<4; x++) // Columns
+            for (int x = 0; x < 4; x++) // Columns
             {
-                for(int y=0; y<4; y++)
+                for (int y = 0; y < 4; y++)
                 {
                     int currIndex = (x * 4);
 
@@ -749,8 +703,8 @@ namespace Encryption_Prototype
                     byte multiplier3 = leftMatrix[y, 2];
                     byte multiplier4 = leftMatrix[y, 3];
 
-                    Word[currIndex+y] = (byte)(MixMultiply(oldWord[currIndex], multiplier1) ^ MixMultiply(oldWord[currIndex + 1], multiplier2) ^ MixMultiply(oldWord[currIndex + 2], multiplier3) ^ MixMultiply(oldWord[currIndex + 3], multiplier4));
-                    debug($"({ByteToHex(oldWord[currIndex])} * {multiplier1})  ^  ({ByteToHex(oldWord[currIndex + 1])} * {multiplier2})  ^  ({ByteToHex(oldWord[currIndex + 2])} * {multiplier3})  ^  ({ByteToHex(oldWord[currIndex + 3])} * {multiplier4})  ->  {ByteToHex(Word[currIndex+y])}");
+                    Word[currIndex + y] = (byte)(MixMultiply(oldWord[currIndex], multiplier1) ^ MixMultiply(oldWord[currIndex + 1], multiplier2) ^ MixMultiply(oldWord[currIndex + 2], multiplier3) ^ MixMultiply(oldWord[currIndex + 3], multiplier4));
+                    debug($"({ByteToHex(oldWord[currIndex])} * {multiplier1})  ^  ({ByteToHex(oldWord[currIndex + 1])} * {multiplier2})  ^  ({ByteToHex(oldWord[currIndex + 2])} * {multiplier3})  ^  ({ByteToHex(oldWord[currIndex + 3])} * {multiplier4})  ->  {ByteToHex(Word[currIndex + y])}");
                 }
             }
         }
@@ -783,7 +737,7 @@ namespace Encryption_Prototype
         }
         private void InvMixColumns(ref Byte[] Word)
         {
-            
+
             MixColumns(ref Word);
             debug("------------------------------------------");
             //byte[,] leftMatrix = new byte[4, 4] { { 14, 11, 13, 9 }, { 9, 14, 11, 13 }, { 13, 9, 14, 11 }, { 11, 13, 9, 14 } };
@@ -804,11 +758,11 @@ namespace Encryption_Prototype
                     byte multiplier4 = leftMatrix[y, 3];
 
                     Word[currIndex + y] = (byte)(MixMultiply(oldWord[currIndex], multiplier1) ^ MixMultiply(oldWord[currIndex + 1], multiplier2) ^ MixMultiply(oldWord[currIndex + 2], multiplier3) ^ MixMultiply(oldWord[currIndex + 3], multiplier4));
-                    debug($"({ByteToHex(oldWord[currIndex])} * {multiplier1})  ^  ({ByteToHex(oldWord[currIndex + 1])} * {multiplier2})  ^  ({ByteToHex(oldWord[currIndex + 2])} * {multiplier3})  ^  ({ByteToHex(oldWord[currIndex + 3])} * {multiplier4})  ->  {ByteToHex(Word[currIndex+y])}");
+                    debug($"({ByteToHex(oldWord[currIndex])} * {multiplier1})  ^  ({ByteToHex(oldWord[currIndex + 1])} * {multiplier2})  ^  ({ByteToHex(oldWord[currIndex + 2])} * {multiplier3})  ^  ({ByteToHex(oldWord[currIndex + 3])} * {multiplier4})  ->  {ByteToHex(Word[currIndex + y])}");
                 }
             }
-            
-            
+
+
         }
 
         // General Functions
@@ -822,14 +776,14 @@ namespace Encryption_Prototype
             }
             return result;
         }
-        private void debug(string message, bool ignoreConcat = false)
+        private void debug(string message, bool ignoreConcat = false, [CallerMemberName] string method = null)
         {
-            string method = (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name;
+            // string method = (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name;
             if (b_debug && !debug_Blacklist.Contains(method))
             {
-                if (message.Length > (Console.WindowWidth - 3) && !ignoreConcat)
+                if (false && message.Length > 80 && !ignoreConcat)
                 {
-                    message = message.Remove(Console.WindowWidth - 3) + "..."; ;
+                    message = message.Remove(30 - 3) + "..."; ;
                 }
                 Console.WriteLine(message);
             }
@@ -841,9 +795,9 @@ namespace Encryption_Prototype
             {
                 text = Convert.ToBase64String(data);
             }
-            else if(b_debug_type.StartsWith("hex"))  // Hex
+            else if (b_debug_type.StartsWith("hex"))  // Hex
             {
-                if(b_debug_type == "hex")
+                if (b_debug_type == "hex")
                 {
                     text = ByteToHex(data);
                 }
@@ -857,8 +811,8 @@ namespace Encryption_Prototype
                 //text = String.Join(String.Empty, BitConverter.ToString(data).Split('-').Reverse());
             }
             else
-            { 
-                foreach(byte b_data in data)
+            {
+                foreach (byte b_data in data)
                 {
                     text = text + Convert.ToString(b_data, 2).PadLeft(8, '0') + " ";
                 }
@@ -872,7 +826,7 @@ namespace Encryption_Prototype
         }
         private string ByteToHex(byte input, string seperator = "")
         {
-            byte[] b_input = new byte[] {input };
+            byte[] b_input = new byte[] { input };
             return BitConverter.ToString(b_input).Replace("-", seperator);
         }
 
@@ -901,15 +855,15 @@ namespace Encryption_Prototype
                     break;
             }
             debug($"{ByteToHex(large)} * {small} -> {ByteToHex((byte)result)}");
-            
-            return (byte) result;
+
+            return (byte)result;
         }
         private byte Multiply2(byte large)
         {
             int result = large << 1;
-            if(Convert.ToBoolean(large & 0x80))
+            if (Convert.ToBoolean(large & 0x80))
             {
-                result = (result ^ 0x1B);
+                result = (result ^ 0x11B);
             }
             return (byte)result;
         }

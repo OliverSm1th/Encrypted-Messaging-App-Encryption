@@ -1,14 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Encryption_Prototype;
-using System;
 using System.Numerics;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DiffieHellmanTest
 {
     [TestClass]
-    
     public class Diffie_HellmanTests
     {
         
@@ -16,18 +12,14 @@ namespace DiffieHellmanTest
         public DiffieHellman DHTest_A;
         public DiffieHellman DHTest_B;
 
-
-
         [TestMethod]
         public void InitiliseTest()
-        {
-            KeyData value = new DiffieHellman().Initilise(14);
+        {   KeyData value = new DiffieHellman().Initilise();
             Assert.IsNotNull(value.prime, "Prime not defined");
             Assert.IsNotNull(value.global, "Global not defined");
+            Assert.AreEqual(value.global, 5);
             Assert.IsNotNull(value.A_Key, "Secret key not defined");
             Assert.IsTrue((value.B_Key==0), $"Response key defined: {value.B_Key}");
-            //Assert.IsTrue(Math.Floor(BigInteger.Log10(value.A_Key) + 1) == );
-            //Assert.Fail();
         }
 
         [TestMethod]
@@ -36,24 +28,15 @@ namespace DiffieHellmanTest
             DiffieHellman DHTest_A = new DiffieHellman();
             DiffieHellman DHTest_B = new DiffieHellman();
 
-            KeyData data = DHTest_A.Initilise(14);
+            KeyData data = DHTest_A.Initilise();
             data = DHTest_B.Respond(data);
 
             Assert.IsTrue((data.B_Key > 0), $"Response key not defined: {data.B_Key}");
         }
-
-        //[TestInitialize]
-        //public void getSharedKeyTestInit(){
-            
-            
-
-            
-        //}
         [TestMethod]
         public void getSharedKeyTest()
         {
             DiffieHellman DHTest_A = new DiffieHellman();
-            DiffieHellman DHTest_B = new DiffieHellman();
 
             data = DHTest_A.Initilise(5, 5);
             data.A_Key = BigInteger.Parse("10B282EFA657A3072D05BC16BA73C704A9FB08C33BB82160FB84C65EA9B3C6E42DE1C8491B8F6BC90D09F6EC1EE3C07108F2D5D23E12127980CC4CD1DD8D8A1C50C2FC7C9EDCC36792FBCC556F20D8F5DD4EB41242B93D3263359779C7B4E0884B35A6190F6123E0E7DC55B7F1E0C75605ECF75B33232A489439AFC6A76B11A0052473D3DF9C3ADA405D701BA4074361BDDB366BFFCBD2A15F7209AEA91F4DDFC0D53AAB22A76B4FEDB931FBD1143A5DA481DDF993C9A2843E584950995F82A9", System.Globalization.NumberStyles.AllowHexSpecifier);

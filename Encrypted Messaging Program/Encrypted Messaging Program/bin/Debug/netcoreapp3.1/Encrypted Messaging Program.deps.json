@@ -8,6 +8,8 @@
     ".NETCoreApp,Version=v3.1": {
       "Encrypted Messaging Program/1.0.0": {
         "dependencies": {
+          "FirebaseAdmin": "2.2.0",
+          "FirebaseAuthentication.net": "3.7.1",
           "FirebaseDatabase.net": "4.0.6",
           "Google.Cloud.Firestore": "1.1.0-beta01"
         },
@@ -15,10 +17,35 @@
           "Encrypted Messaging Program.dll": {}
         }
       },
+      "FirebaseAdmin/2.2.0": {
+        "dependencies": {
+          "Google.Api.Gax.Rest": "3.2.0",
+          "Google.Apis.Auth": "1.49.0",
+          "System.Collections.Immutable": "1.7.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/FirebaseAdmin.dll": {
+            "assemblyVersion": "2.2.0.0",
+            "fileVersion": "2.2.0.0"
+          }
+        }
+      },
+      "FirebaseAuthentication.net/3.7.1": {
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "runtime": {
+          "lib/netstandard1.1/Firebase.Auth.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "FirebaseDatabase.net/4.0.6": {
         "dependencies": {
           "LiteDB": "4.1.4",
-          "Newtonsoft.Json": "11.0.2",
+          "Newtonsoft.Json": "12.0.3",
           "System.Reactive": "4.0.0"
         },
         "runtime": {
@@ -39,23 +66,23 @@
           }
         }
       },
-      "Google.Api.Gax/2.9.0": {
+      "Google.Api.Gax/3.2.0": {
         "dependencies": {
-          "Newtonsoft.Json": "11.0.2",
-          "System.Interactive.Async": "3.2.0"
+          "Microsoft.Bcl.AsyncInterfaces": "1.0.0",
+          "Newtonsoft.Json": "12.0.3"
         },
         "runtime": {
           "lib/netstandard2.0/Google.Api.Gax.dll": {
-            "assemblyVersion": "2.9.0.0",
-            "fileVersion": "2.9.0.0"
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
           }
         }
       },
       "Google.Api.Gax.Grpc/2.9.0": {
         "dependencies": {
           "Google.Api.CommonProtos": "1.7.0",
-          "Google.Api.Gax": "2.9.0",
-          "Google.Apis.Auth": "1.40.2",
+          "Google.Api.Gax": "3.2.0",
+          "Google.Apis.Auth": "1.49.0",
           "Grpc.Auth": "1.22.0",
           "Grpc.Core": "1.22.0"
         },
@@ -66,42 +93,53 @@
           }
         }
       },
-      "Google.Apis/1.40.2": {
+      "Google.Api.Gax.Rest/3.2.0": {
         "dependencies": {
-          "Google.Apis.Core": "1.40.2",
-          "Newtonsoft.Json": "11.0.2"
+          "Google.Api.Gax": "3.2.0",
+          "Google.Apis.Auth": "1.49.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Api.Gax.Rest.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
+          }
+        }
+      },
+      "Google.Apis/1.49.0": {
+        "dependencies": {
+          "Google.Apis.Core": "1.49.0"
         },
         "runtime": {
           "lib/netstandard2.0/Google.Apis.dll": {
-            "assemblyVersion": "1.40.2.0",
-            "fileVersion": "1.40.2.0"
+            "assemblyVersion": "1.49.0.0",
+            "fileVersion": "1.49.0.0"
           }
         }
       },
-      "Google.Apis.Auth/1.40.2": {
+      "Google.Apis.Auth/1.49.0": {
         "dependencies": {
-          "Google.Apis": "1.40.2",
-          "Google.Apis.Core": "1.40.2"
+          "Google.Apis": "1.49.0",
+          "Google.Apis.Core": "1.49.0"
         },
         "runtime": {
           "lib/netstandard2.0/Google.Apis.Auth.PlatformServices.dll": {
-            "assemblyVersion": "1.40.2.0",
-            "fileVersion": "1.40.2.0"
+            "assemblyVersion": "1.49.0.0",
+            "fileVersion": "1.49.0.0"
           },
           "lib/netstandard2.0/Google.Apis.Auth.dll": {
-            "assemblyVersion": "1.40.2.0",
-            "fileVersion": "1.40.2.0"
+            "assemblyVersion": "1.49.0.0",
+            "fileVersion": "1.49.0.0"
           }
         }
       },
-      "Google.Apis.Core/1.40.2": {
+      "Google.Apis.Core/1.49.0": {
         "dependencies": {
-          "Newtonsoft.Json": "11.0.2"
+          "Newtonsoft.Json": "12.0.3"
         },
         "runtime": {
           "lib/netstandard2.0/Google.Apis.Core.dll": {
-            "assemblyVersion": "1.40.2.0",
-            "fileVersion": "1.40.2.0"
+            "assemblyVersion": "1.49.0.0",
+            "fileVersion": "1.49.0.0"
           }
         }
       },
@@ -109,7 +147,7 @@
         "dependencies": {
           "Google.Cloud.Firestore.V1": "1.1.0-beta01",
           "Grpc.Core": "1.22.0",
-          "System.Collections.Immutable": "1.4.0"
+          "System.Collections.Immutable": "1.7.1"
         },
         "runtime": {
           "lib/netstandard2.0/Google.Cloud.Firestore.dll": {
@@ -157,7 +195,7 @@
       },
       "Grpc.Auth/1.22.0": {
         "dependencies": {
-          "Google.Apis.Auth": "1.40.2",
+          "Google.Apis.Auth": "1.49.0",
           "Grpc.Core": "1.22.0"
         },
         "runtime": {
@@ -235,6 +273,14 @@
           }
         }
       },
+      "Microsoft.Bcl.AsyncInterfaces/1.0.0": {
+        "runtime": {
+          "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "4.700.19.46214"
+          }
+        }
+      },
       "Microsoft.NETCore.Platforms/1.1.0": {},
       "Microsoft.NETCore.Targets/1.1.0": {},
       "Microsoft.Win32.Primitives/4.3.0": {
@@ -292,11 +338,11 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
-      "Newtonsoft.Json/11.0.2": {
+      "Newtonsoft.Json/12.0.3": {
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {
-            "assemblyVersion": "11.0.0.0",
-            "fileVersion": "11.0.2.21924"
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.3.23909"
           }
         }
       },
@@ -383,7 +429,14 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
-      "System.Collections.Immutable/1.4.0": {},
+      "System.Collections.Immutable/1.7.1": {
+        "runtime": {
+          "lib/netstandard2.0/System.Collections.Immutable.dll": {
+            "assemblyVersion": "1.2.5.0",
+            "fileVersion": "4.700.20.21406"
+          }
+        }
+      },
       "System.Console/4.3.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.1.0",
@@ -943,6 +996,20 @@
       "serviceable": false,
       "sha512": ""
     },
+    "FirebaseAdmin/2.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nF+7Z7kJ2ikjh75vjKkSmuqgI9b0O8Azygu3GMvx3/z3v5dnk5b6O9nL5/WkuCenYDzyz35r85pkN3C9K93+2g==",
+      "path": "firebaseadmin/2.2.0",
+      "hashPath": "firebaseadmin.2.2.0.nupkg.sha512"
+    },
+    "FirebaseAuthentication.net/3.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-V8rIhr8rpvT8TjPJwMEbK8gX8uz5bYyTtFnzMZqEo/Tr/zPs1ycPcfqXmP3zLpTomuoZap7ER2xXrZyolcb1/g==",
+      "path": "firebaseauthentication.net/3.7.1",
+      "hashPath": "firebaseauthentication.net.3.7.1.nupkg.sha512"
+    },
     "FirebaseDatabase.net/4.0.6": {
       "type": "package",
       "serviceable": true,
@@ -957,12 +1024,12 @@
       "path": "google.api.commonprotos/1.7.0",
       "hashPath": "google.api.commonprotos.1.7.0.nupkg.sha512"
     },
-    "Google.Api.Gax/2.9.0": {
+    "Google.Api.Gax/3.2.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-uWVVVB+ZRqlfTBPbFaL1If8JAS6b6ysX3YXToSxRXrw6BeKp3bP6svgwFS1oV69a6sZeZxcGYRzO8S2QPYn4ZA==",
-      "path": "google.api.gax/2.9.0",
-      "hashPath": "google.api.gax.2.9.0.nupkg.sha512"
+      "sha512": "sha512-0OjahFAHTOoprSgvJiQ6/fIQLrUYU4QIFgkuJ51/lcmhZbuXxB3ycPk3JTVEvx6A5yQBL14wgmHgwXLcEsnu3Q==",
+      "path": "google.api.gax/3.2.0",
+      "hashPath": "google.api.gax.3.2.0.nupkg.sha512"
     },
     "Google.Api.Gax.Grpc/2.9.0": {
       "type": "package",
@@ -971,26 +1038,33 @@
       "path": "google.api.gax.grpc/2.9.0",
       "hashPath": "google.api.gax.grpc.2.9.0.nupkg.sha512"
     },
-    "Google.Apis/1.40.2": {
+    "Google.Api.Gax.Rest/3.2.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-cA0x/6oV3K2zpcK3OdqkCUB80QkuVUe9naAdlVcshelPSL9tJzKdBR11LMz4hAOpTc2vtqMm9rkQa4jgOfHRWw==",
-      "path": "google.apis/1.40.2",
-      "hashPath": "google.apis.1.40.2.nupkg.sha512"
+      "sha512": "sha512-YY4mD0nGxTx1uez7Perm+zAd3FH50dd3+7HTYsRFCywDEtj3RkrMjcAmw6mNpKkw2sRICu7aYNy1mgMjd3nVbw==",
+      "path": "google.api.gax.rest/3.2.0",
+      "hashPath": "google.api.gax.rest.3.2.0.nupkg.sha512"
     },
-    "Google.Apis.Auth/1.40.2": {
+    "Google.Apis/1.49.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-0YHiCwWF5DkKf7kpe89AjAB9FoJTu1qpPdkw3eUwfFc8ohuGQbxSVgyiieAtWhSvJ01iKH7zepdNR1PyrFPRvQ==",
-      "path": "google.apis.auth/1.40.2",
-      "hashPath": "google.apis.auth.1.40.2.nupkg.sha512"
+      "sha512": "sha512-fmXQQTxZFOBlnvokvdQMzq0Lt+g2QzpZ4H6U8lMMFHgAR8ZqxQnPN5yHDpoHf7a++hJHb5W3pALxauGsq+afKQ==",
+      "path": "google.apis/1.49.0",
+      "hashPath": "google.apis.1.49.0.nupkg.sha512"
     },
-    "Google.Apis.Core/1.40.2": {
+    "Google.Apis.Auth/1.49.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-eOI5/BdxfRgrI+3ZGVrogatR7VvHyKvcPCRNDi1KS/ptm0CTf4+zY8I/ryrMCIrKMoW9aQamMoNjbKFruRIv8A==",
-      "path": "google.apis.core/1.40.2",
-      "hashPath": "google.apis.core.1.40.2.nupkg.sha512"
+      "sha512": "sha512-3V9ohvixQtjaEvk7T9Ac7E/KvwEPa7eL4aMNreJDI0CEPzCdQdk2zCvaJPRrNIjhe+UuBeOeom1oAOMFB74JHg==",
+      "path": "google.apis.auth/1.49.0",
+      "hashPath": "google.apis.auth.1.49.0.nupkg.sha512"
+    },
+    "Google.Apis.Core/1.49.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9DgGdtyzgrCfHWwc/HiDXDbykNMeKQozbEHYEUEcezRuH+YR3fvq7YGVBDmUM8g6qEL3kDk6h5EU4h0IJwue1w==",
+      "path": "google.apis.core/1.49.0",
+      "hashPath": "google.apis.core.1.49.0.nupkg.sha512"
     },
     "Google.Cloud.Firestore/1.1.0-beta01": {
       "type": "package",
@@ -1048,6 +1122,13 @@
       "path": "litedb/4.1.4",
       "hashPath": "litedb.4.1.4.nupkg.sha512"
     },
+    "Microsoft.Bcl.AsyncInterfaces/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-K63Y4hORbBcKLWH5wnKgzyn7TOfYzevIEwIedQHBIkmkEBA9SCqgvom+XTuE+fAFGvINGkhFItaZ2dvMGdT5iw==",
+      "path": "microsoft.bcl.asyncinterfaces/1.0.0",
+      "hashPath": "microsoft.bcl.asyncinterfaces.1.0.0.nupkg.sha512"
+    },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "type": "package",
       "serviceable": true,
@@ -1076,12 +1157,12 @@
       "path": "netstandard.library/1.6.1",
       "hashPath": "netstandard.library.1.6.1.nupkg.sha512"
     },
-    "Newtonsoft.Json/11.0.2": {
+    "Newtonsoft.Json/12.0.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
-      "path": "newtonsoft.json/11.0.2",
-      "hashPath": "newtonsoft.json.11.0.2.nupkg.sha512"
+      "sha512": "sha512-6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",
@@ -1142,7 +1223,7 @@
     "runtime.opensuse.13.2-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-zWLOQ77Y4FV/6Vw2g+FYzprbQX5/xKvjoCLe4L9159Aw1bSboQoJ1KRZFNdexDooWRAIsLSdE0ZokkrVkwN8Yw==",
+      "sha512": "sha512-b3pthNgxxFcD+Pc0WSEoC0+md3MyhRS6aCEeenvNE3Fdw1HyJ18ZhRFVJJzIeR/O/jpxPboB805Ho0T3Ul7w8A==",
       "path": "runtime.opensuse.13.2-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "hashPath": "runtime.opensuse.13.2-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512"
     },
@@ -1163,35 +1244,35 @@
     "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-/p8IQT2brFMDa7BHMH71LV+w5Tb3OxoLHxhn6+MGqN5xeqhM2HRHmj+7xQGJnaRn73d7ZTvp6yRCFMvolws4wA==",
+      "sha512": "sha512-X7IdhILzr4ROXd8mI1BUCQMSHSQwelUlBjF1JyTKCjXaOGn2fB4EKBxQbCK2VjO3WaWIdlXZL3W6TiIVnrhX4g==",
       "path": "runtime.osx.10.10-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "hashPath": "runtime.osx.10.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512"
     },
     "runtime.rhel.7-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-T5NvFgmHX0WH4c7lP72krsnk+IJI10vJf2j2twGE+5QBRA4RyRAgD+ZjEgdmpLOjW4B+nZGaadewTCUcR899OQ==",
+      "sha512": "sha512-nyFNiCk/r+VOiIqreLix8yN+q3Wga9+SE8BCgkf+2BwEKiNx6DyvFjCgkfV743/grxv8jHJ8gUK4XEQw7yzRYg==",
       "path": "runtime.rhel.7-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "hashPath": "runtime.rhel.7-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512"
     },
     "runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-JGc0pAWRE8lB4Ucygk2pYSKbUPLlAIq6Bczf5/WF2D/VKJEPtYlVUMxk8fbl1zRfTWzSHi+VcFZlaPlWiNxeKg==",
+      "sha512": "sha512-ytoewC6wGorL7KoCAvRfsgoJPJbNq+64k2SqW6JcOAebWsFUvCCYgfzQMrnpvPiEl4OrblUlhF2ji+Q1+SVLrQ==",
       "path": "runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "hashPath": "runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512"
     },
     "runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-YWzJvhiC+iLWI/IfpPQUIBhYnAHUFQFRDqR7VDNmPj0b3rjW7dArFqKysZ9v0iSBs9Ih4v9GasLpYCSUwADMQQ==",
+      "sha512": "sha512-I8bKw2I8k58Wx7fMKQJn2R8lamboCAiHfHeV/pS65ScKWMMI0+wJkLYlEKvgW1D/XvSl/221clBoR2q9QNNM7A==",
       "path": "runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "hashPath": "runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512"
     },
     "runtime.ubuntu.16.10-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-1uVTITQP8/cI6YoO6FqfW1pzP0k2TnDZ3TFD88Bu/9H7ZuTsMY9xmadbGpwPu8w8swcd1ifZJsjD9hF9O6C/tg==",
+      "sha512": "sha512-VB5cn/7OzUfzdnC8tqAIMQciVLiq2epm2NrAm1E9OjNRyG4lVhfR61SMcLizejzQP8R8Uf/0l5qOIbUEi+RdEg==",
       "path": "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "hashPath": "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512"
     },
@@ -1223,12 +1304,12 @@
       "path": "system.collections.concurrent/4.3.0",
       "hashPath": "system.collections.concurrent.4.3.0.nupkg.sha512"
     },
-    "System.Collections.Immutable/1.4.0": {
+    "System.Collections.Immutable/1.7.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-71hw5RUJRu5+q/geUY69gpXD8Upd12cH+F3MwpXV2zle7Bqqkrmc1JblOTuvUcgmdnUtQvBlV5e1d6RH+H2lvA==",
-      "path": "system.collections.immutable/1.4.0",
-      "hashPath": "system.collections.immutable.1.4.0.nupkg.sha512"
+      "sha512": "sha512-B43Zsz5EfMwyEbnObwRxW5u85fzJma3lrDeGcSAV1qkhSRTNY5uXAByTn9h9ddNdhM+4/YoLc/CI43umjwIl9Q==",
+      "path": "system.collections.immutable/1.7.1",
+      "hashPath": "system.collections.immutable.1.7.1.nupkg.sha512"
     },
     "System.Console/4.3.0": {
       "type": "package",
@@ -1520,7 +1601,7 @@
     "System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-vOYy7Jv9KsG3ld2hLt0GoERd82SZi4BelrbXLwI9yFBYX7kpbvUCWYo4eyevk47cuJXZ9ZLVAryANcc7iY71aA==",
+      "sha512": "sha512-h4CEgOgv5PKVF/HwaHzJRiVboL2THYCou97zpmhjghx5frc7fIvlkY1jL+lnIQyChrJDMNEXS6r7byGif8Cy4w==",
       "path": "system.security.cryptography.openssl/4.3.0",
       "hashPath": "system.security.cryptography.openssl.4.3.0.nupkg.sha512"
     },
