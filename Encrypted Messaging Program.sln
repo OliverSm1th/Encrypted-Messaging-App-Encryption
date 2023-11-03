@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Encryption Project", "Encrypted-Messaging-Program\Encryption Project.csproj", "{906BE504-7CCA-45D6-BB5D-F97579B8239C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Encrypted Messaging ProgramTests", "Encrypted Messaging ProgramTests\Encrypted Messaging ProgramTests.csproj", "{B0783137-E178-480B-BC70-4721ED997A83}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{906BE504-7CCA-45D6-BB5D-F97579B8239C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{906BE504-7CCA-45D6-BB5D-F97579B8239C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{906BE504-7CCA-45D6-BB5D-F97579B8239C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{906BE504-7CCA-45D6-BB5D-F97579B8239C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0783137-E178-480B-BC70-4721ED997A83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0783137-E178-480B-BC70-4721ED997A83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0783137-E178-480B-BC70-4721ED997A83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0783137-E178-480B-BC70-4721ED997A83}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A1BB6251-DF10-4A9E-9F03-60D2845138E4}
+	EndGlobalSection
+EndGlobal
