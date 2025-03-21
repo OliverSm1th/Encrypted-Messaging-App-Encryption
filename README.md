@@ -9,6 +9,6 @@ Includes:
 
 (Updated as part of my PDP to add a CBC encryption/decryption mode and to make it more readable)  
 <details>
-<summary><b>Example Demonstraction</b></summary>
+<summary><b>Example Demonstration</b></summary>
 <img height="400" src="https://i.imgur.com/aykDU1X.gif">
 </details>
